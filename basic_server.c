@@ -73,25 +73,25 @@ int main()
   gethostname(hostname, sizeof(hostname));
   printf("hostname: %s \n", hostname);
   printf("server: waiting for connections... \n");
+  freeaddrinfo(res);
 
   while(1){
     addr_size = sizeof client_addr;
+    //one client at a time
     new_fd = accept(sockfd, (struct sockaddr *)&client_addr, &addr_size);
     if (new_fd == -1){
       perror("accept");
       continue;
-    }
-    struct sockaddr_in *sa = (struct sockaddr_in *)&client_addr;
-    inet_ntop(client_addr.ss_family, &(sa->sin_addr), str, res->ai_addrlen);
-    printf("server: got connection from %s \n", str);
-    
-    while ((bytes_rec = recv(new_fd, msg, 128, 0)) != 0) {
+    } else {
+      struct sockaddr_in *sa = (struct sockaddr_in *)&client_addr;
+      inet_ntop(client_addr.ss_family, &(sa->sin_addr), str, res->ai_addrlen);
+      printf("server: got connection from %s \n", str);
+      
+      while ((bytes_rec = recv(new_fd, msg, 128, 0)) != 0) {
         printf("Message received: %s, bytes received: %lu \n", msg, bytes_rec);
+      }
+      printf("Connection closed: %d\n", new_fd);
     }
   }
-
-
-  
-  freeaddrinfo(res);
   return 0;
 }
