@@ -61,6 +61,7 @@ int main()
   size_t bytes_sent;
   bytes_sent = send(sockfd, m, strlen(m)+1,0);
   printf("Sent bytes: %lu\n", bytes_sent);
+  close(sockfd);
   freeaddrinfo(res);
   return 0;
 }
